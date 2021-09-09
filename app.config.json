@@ -1,0 +1,10 @@
+{
+  "expo": {
+    "plugins": [
+      "@react-native-mapbox-gl/maps"
+    ],
+    "android": {
+      "package": "com.planet.runners"
+    }
+  }
+}
