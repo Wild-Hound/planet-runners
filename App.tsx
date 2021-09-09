@@ -4,6 +4,7 @@ import { StyleSheet, Text, View, SafeAreaView } from "react-native";
 import MapboxGL from "@react-native-mapbox-gl/maps";
 import Areas from "./Components/Areas";
 import landMarks from "./landmarks.json";
+import AreaInfo from "./Components/AreaInfo";
 
 MapboxGL.setAccessToken(
   "pk.eyJ1IjoieWFzaW40MDQiLCJhIjoiY2t0YmpjZTdnMDM5ODJvdGRwNHZncWt0ayJ9.orayVUNQxr7W6AQkR6toZw"
@@ -16,6 +17,15 @@ export default function App() {
   const [lonLatList, setLonLatList] = useState([[103.9897593, 1.3602082]]);
   const [locationNames, setLocationNames] = useState<string[]>([]);
   const [currentLoc, setCurrentLoc] = useState(0);
+  const [currentLocInfo, setCurrentLocInfo] = useState({
+    imgURL: "",
+    name: "",
+    country: "",
+    city: "",
+    disc: "",
+  });
+
+  const [showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
     // @ts-ignore
@@ -37,21 +47,35 @@ export default function App() {
     setCurrentLoc(index);
   }
 
-  function pointSelected() {
-    console.log("Point Selected");
-  }
-
   function setAllPoints() {
     const allPoints = lonLatList.map((location, index) => {
       return (
         <MapboxGL.PointAnnotation
           id={`${index}`}
           coordinate={location}
-          onSelected={pointSelected}
+          onSelected={() => pointerPressed(index)}
         />
       );
     });
     return allPoints;
+  }
+
+  function changePopupState() {
+    setShowPopup(!showPopup);
+  }
+
+  function pointerPressed(index: number) {
+    const tempLocInfo = {
+      imgURL: locationsData[index].images[0].url,
+      name: locationsData[index].name,
+      country: locationsData[index].country,
+      city: locationsData[index].city,
+      disc: locationsData[index].description,
+    };
+
+    // @ts-ignore
+    setCurrentLocInfo(tempLocInfo);
+    !showPopup && changePopupState();
   }
 
   return (
@@ -66,6 +90,12 @@ export default function App() {
           {setAllPoints()}
         </MapboxGL.MapView>
       </View>
+      {showPopup && (
+        <AreaInfo
+          locationInfo={currentLocInfo}
+          closeBtnAct={changePopupState}
+        />
+      )}
     </SafeAreaView>
   );
 }
