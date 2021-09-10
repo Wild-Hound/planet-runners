@@ -28,6 +28,7 @@ const Areas: React.FC<Props> = ({ onAreaPress, locationNames }) => {
             <TouchableOpacity
               style={styles.itemWrapper}
               onPress={(e) => onAreaPress(index)}
+              key={index}
             >
               <Image source={icon} style={styles.icon} />
               <Text style={styles.areaName}>{location}</Text>

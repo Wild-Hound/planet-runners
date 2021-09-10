@@ -17,13 +17,7 @@ export default function App() {
   const [lonLatList, setLonLatList] = useState([[103.9897593, 1.3602082]]);
   const [locationNames, setLocationNames] = useState<string[]>([]);
   const [currentLoc, setCurrentLoc] = useState(0);
-  const [currentLocInfo, setCurrentLocInfo] = useState({
-    imgURL: "",
-    name: "",
-    country: "",
-    city: "",
-    disc: "",
-  });
+  const [currentLocInfo, setCurrentLocInfo] = useState({});
 
   const [showPopup, setShowPopup] = useState(false);
 
@@ -52,6 +46,7 @@ export default function App() {
       return (
         <MapboxGL.PointAnnotation
           id={`${index}`}
+          key={index}
           coordinate={location}
           onSelected={() => pointerPressed(index)}
         />
@@ -66,7 +61,7 @@ export default function App() {
 
   function pointerPressed(index: number) {
     const tempLocInfo = {
-      imgURL: locationsData[index].images[0].url,
+      imgURL: locationsData[index].images,
       name: locationsData[index].name,
       country: locationsData[index].country,
       city: locationsData[index].city,
@@ -92,6 +87,7 @@ export default function App() {
       </View>
       {showPopup && (
         <AreaInfo
+          // @ts-ignore
           locationInfo={currentLocInfo}
           closeBtnAct={changePopupState}
         />

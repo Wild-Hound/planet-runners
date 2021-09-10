@@ -7,11 +7,15 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
+// @ts-ignore
+import spinner from "../assets/Images/Spinner.gif";
 
 interface Props {
   closeBtnAct: Function;
   locationInfo: {
-    imgURL: string;
+    imgURL: {
+      url: string;
+    }[];
     name: string;
     country: string;
     city: string;
@@ -20,16 +24,46 @@ interface Props {
 }
 
 const AreaInfo: React.FC<Props> = ({ closeBtnAct, locationInfo }) => {
-  console.log(locationInfo.imgURL);
+  const [currentImg, setCurrentImg] = useState(0);
+
+  function imgChangeBtn() {
+    return (
+      <View style={styles.imgChangeWrapper}>
+        {locationInfo.imgURL.map((item, index) => {
+          return (
+            <TouchableOpacity
+              key={index}
+              style={
+                currentImg === index
+                  ? styles.selectedImgChangeBtn
+                  : styles.imgChangeBtn
+              }
+              onPress={(e) => setCurrentImg(index)}
+            ></TouchableOpacity>
+          );
+        })}
+      </View>
+    );
+  }
+
   return (
     <View style={styles.wrapper}>
-      <View>
+      <View
+        style={{
+          alignItems: "center",
+          backgroundColor: "#f1f2f3",
+          borderTopLeftRadius: 10,
+          borderBottomLeftRadius: 10,
+        }}
+      >
         <Image
           style={styles.locImage}
           source={{
-            uri: `${locationInfo.imgURL}`,
+            uri: `${locationInfo.imgURL[currentImg].url}`,
           }}
+          loadingIndicatorSource={spinner}
         />
+        {imgChangeBtn()}
       </View>
       <View style={locMetaStyles.locMeta}>
         <Text style={locMetaStyles.locName}>{locationInfo.name}</Text>
@@ -64,7 +98,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   locImage: {
-    height: 175,
+    height: "100%",
     width: 150,
     borderTopLeftRadius: 10,
     borderBottomLeftRadius: 10,
@@ -80,13 +114,33 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
   },
+  imgChangeWrapper: {
+    flexDirection: "row",
+    justifyContent: "center",
+    position: "absolute",
+    bottom: 15,
+  },
+  imgChangeBtn: {
+    height: 8,
+    width: 8,
+    borderRadius: 10,
+    backgroundColor: "#fff",
+    marginHorizontal: 5,
+  },
+  selectedImgChangeBtn: {
+    height: 8,
+    width: 8,
+    borderRadius: 10,
+    marginHorizontal: 5,
+    backgroundColor: "#81ecec",
+  },
 });
 
 const locMetaStyles = StyleSheet.create({
   locMeta: {
     flex: 1,
     marginTop: 15,
-    paddingHorizontal: 15,
+    paddingHorizontal: 18,
   },
   locName: {
     color: "#fff",
